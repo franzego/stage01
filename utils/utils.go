@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"strings"
 	"time"
 	"unicode"
@@ -57,14 +58,15 @@ func Sha256Encoding(s string) string {
 	hash := sha256.New()
 	hash.Write([]byte(data))
 	encodedHash := hash.Sum(nil)
-	return string(encodedHash)
+	return hex.EncodeToString(encodedHash) // use hex encoding
 }
 
 // func to check for a character frequency
-func CharFrequency(s string) map[rune]int {
-	hashMap := make(map[rune]int)
+func CharFrequency(s string) map[string]int {
+	hashMap := make(map[string]int)
 	for _, r := range s {
-		hashMap[r]++
+		char := string(r)
+		hashMap[char]++
 	}
 	// for r, count := range hashMap {
 	// 	fmt.Printf("'%c': %d\n", r, count)

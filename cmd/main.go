@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/franzego/stage01/internal"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -13,6 +14,9 @@ import (
 func main() {
 
 	r := gin.Default()
+	r.POST("/strings", internal.PostString)
+	r.GET("/strings/:string_value", internal.GetString)
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Print("Error loading .env file")
