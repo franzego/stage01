@@ -22,3 +22,19 @@ type Props struct {
 	Sha256Hash            string      `json:"sha256_hash"`
 	CharacterFrequencyMap interface{} `json:"character_frequnecy_map"`
 }
+
+// Response to fileter struct
+type Respfilter struct {
+	Data    Resp      `json:"data"`
+	Count   int       `json:"count"`
+	Filters Filtersss `json:"filters"`
+}
+
+// Filters struct
+type Filtersss struct {
+	IsPalindrome bool   `json:"is_palindrome"`
+	MinLength    int    `json:"min_length"`
+	MaxLength    int    `json:"max_length"`
+	WordCount    int    `json:"word_count"`
+	ContainsChar string `json:"contains_char"`
+}

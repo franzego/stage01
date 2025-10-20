@@ -2,6 +2,7 @@ package internal
 
 import "github.com/franzego/stage01/dto"
 
+// my in memory db for this project
 var HardcodedStrings = []dto.Resp{
 	{
 		Id:    "b1946ac92492d2347c6235b4d2611184",
@@ -30,3 +31,5 @@ var HardcodedStrings = []dto.Resp{
 		CreatedAt: "2025-10-20T12:00:00Z",
 	},
 }
+
+var FilteredMatches = []dto.Filtersss{}

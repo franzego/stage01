@@ -16,6 +16,7 @@ func main() {
 	r := gin.Default()
 	r.POST("/strings", internal.PostString)
 	r.GET("/strings/:string_value", internal.GetString)
+	r.GET("/strings", internal.GetQueries)
 
 	err := godotenv.Load()
 	if err != nil {
