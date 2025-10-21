@@ -26,6 +26,7 @@ func IsPalindrome(s string) bool {
 	}
 	st := newString.String()
 	runes := []rune(st)
+	// using two pointers. One from the beginning(i) and the end(j)
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 		if runes[i] != runes[j] {
 			return false
@@ -34,7 +35,7 @@ func IsPalindrome(s string) bool {
 	return true
 }
 
-// func to check fo unique xter
+// func to check for unique xter
 func UniqueChar(s string) int {
 	set := make(map[rune]bool)
 	for _, char := range s {

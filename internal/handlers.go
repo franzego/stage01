@@ -74,7 +74,8 @@ func GetQueries(c *gin.Context) {
 	wordCountQuery := c.Query("word_count")
 	containsChar := c.Query("contains_character")
 
-	// Parsed values
+	// Parsed values from the string queries to their respective types. Also doing it safely by checking if they are empty
+	// created variables to hold these values
 	var (
 		isPalindrome                                              bool
 		minLength, maxLength, wordCount                           int
@@ -132,7 +133,7 @@ func GetQueries(c *gin.Context) {
 	}
 
 	if len(filtered) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"message": "No strings matched your filters"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "No strings matched your filters"})
 		return
 	}
 	response := gin.H{
@@ -148,4 +149,90 @@ func GetQueries(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// func for natural language processing
+func GetByNaturalLanguage(c *gin.Context) {
+	qString := c.Query("query")
+
+	if strings.TrimSpace(qString) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'query' is required"})
+		return
+	}
+	f, err := ParseNatrualLanguage(qString)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "string not found"})
+		return
+	}
+
+	var filtered []dto.Resp
+
+	for _, s := range HardcodedStrings {
+		// Match Palindrome
+		if f.IsPalindrome && !s.Props.IsPalindrome {
+			continue
+		}
+
+		// Match min length
+		if f.MinLength > 0 && s.Props.Length < f.MinLength {
+			continue
+		}
+
+		// Match max length
+		if f.MaxLength > 0 && s.Props.Length > f.MaxLength {
+			continue
+		}
+
+		// Match word count
+		if f.WordCount > 0 && s.Props.WordCount != f.WordCount {
+			continue
+		}
+
+		// Match contains character
+		if f.ContainsChar != "" && !strings.Contains(s.Value, f.ContainsChar) {
+			continue
+		}
+
+		filtered = append(filtered, s)
+	}
+	if f.MinLength > 0 && f.MaxLength > 0 && f.MinLength > f.MaxLength {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": "Query parsed but resulted in conflicting filters",
+		})
+		return
+	}
+
+	if len(filtered) == 0 {
+		c.JSON(404, gin.H{"message": "No strings matched your filters"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data":  filtered,
+		"count": len(filtered),
+		"interpreted_query": gin.H{
+			"original":       qString,
+			"parsed_filters": f,
+		},
+	})
+
+}
+
+// func to delete a particular string
+func DeleteString(c *gin.Context) {
+	str := c.Param("string_value")
+	indextoRemove := -1
+	for i, s := range HardcodedStrings {
+		if s.Value == str {
+			indextoRemove = i
+			break
+		}
+	}
+	if indextoRemove == -1 {
+		c.JSON(http.StatusNotFound, gin.H{"Message": "string does not exist in the system"})
+		return
+	}
+	// Safe to remove now
+	HardcodedStrings = append(HardcodedStrings[:indextoRemove], HardcodedStrings[indextoRemove+1:]...)
+	c.JSON(http.StatusNoContent, gin.H{})
+
 }

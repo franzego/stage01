@@ -17,6 +17,8 @@ func main() {
 	r.POST("/strings", internal.PostString)
 	r.GET("/strings/:string_value", internal.GetString)
 	r.GET("/strings", internal.GetQueries)
+	r.GET("/strings/filter-by-natural-language", internal.GetByNaturalLanguage)
+	r.DELETE("/strings/:string_value", internal.DeleteString)
 
 	err := godotenv.Load()
 	if err != nil {
